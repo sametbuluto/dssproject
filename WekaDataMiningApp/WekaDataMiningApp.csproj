@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="weka">
+      <HintPath>lib\weka.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Core">
+      <HintPath>lib\IKVM.OpenJDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.Runtime">
+      <HintPath>lib\IKVM.Runtime.dll</HintPath>
+    </Reference>
+     <!-- Adding other potentially needed IKVM dlls as wildcards isn't supported in Reference Include standardly, 
+          so we relying on the runtime resolving them or adding them if build fails. 
+          Usually Core and Runtime are enough for basic loading, but Weka might need more. -->
+    <Reference Include="IKVM.OpenJDK.Text">
+      <HintPath>lib\IKVM.OpenJDK.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Util">
+      <HintPath>lib\IKVM.OpenJDK.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Security">
+      <HintPath>lib\IKVM.OpenJDK.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.API">
+      <HintPath>lib\IKVM.OpenJDK.XML.API.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+# Visual Studio - Aggressive Ignore
+.vs/
+.vs/*
+**/.vs/
+**/.vs/*
+*.vsidx
+*.suo
+*.user
+*.cache
+
+# Build Results
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.exe
+*.dll
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+Desktop.ini
