@@ -153,29 +153,65 @@ namespace WekaDataMiningApp
             }
         }
 
-        public string PredictWithBest(double sl, double sw, double pl, double pw)
+        public int GetInstanceCount() => _instances == null ? 0 : _instances.numInstances();
+        public string GetClassAttributeName() => _instances == null ? "?" : _instances.classAttribute().name();
+        
+        public AlgorithmResult GetBestResult() => _bestResult;
+
+        public List<AttributeInfo> GetAttributeInfo()
+        {
+            if (_instances == null) return new List<AttributeInfo>();
+            
+            var attrs = new List<AttributeInfo>();
+            for (int i = 0; i < _instances.numAttributes() - 1; i++) // Exclude class attribute
+            {
+                var attr = _instances.attribute(i);
+                var info = new AttributeInfo
+                {
+                    Name = attr.name(),
+                    IsNominal = attr.isNominal()
+                };
+                
+                if (info.IsNominal)
+                {
+                    for (int j = 0; j < attr.numValues(); j++)
+                    {
+                        info.PossibleValues.Add(attr.value(j));
+                    }
+                }
+                
+                attrs.Add(info);
+            }
+            return attrs;
+        }
+
+        public string PredictWithBest(object[] attributeValues)
         {
             if (_bestResult == null || _bestResult.Model == null) return "No model trained yet.";
-
+            
             try
             {
-                // Create attributes array matching the dataset
                 double[] vals = new double[_instances.numAttributes()];
                 
-                // Assuming Iris strict structure: SepalL, SepalW, PetalL, PetalW, Class
-                // We need to match inputs to Attribute Indices.
-                // Verify order from your file content check: 
-                // 0: sepallength, 1: sepalwidth, 2: petallength, 3: petalwidth, 4: class
-                vals[0] = sl;
-                vals[1] = sw;
-                vals[2] = pl;
-                vals[3] = pw;
-                vals[4] = Instance.missingValue();
-
-                // Legacy Instance
+                for (int i = 0; i < attributeValues.Length; i++)
+                {
+                    if (_instances.attribute(i).isNominal())
+                    {
+                        // For nominal, attributeValues[i] is the string value
+                        vals[i] = _instances.attribute(i).indexOfValue(attributeValues[i].ToString());
+                    }
+                    else
+                    {
+                        // For numeric, parse as double
+                        vals[i] = Convert.ToDouble(attributeValues[i]);
+                    }
+                }
+                
+                vals[_instances.numAttributes() - 1] = Instance.missingValue();
+                
                 Instance inst = new Instance(1.0, vals);
                 inst.setDataset(_instances);
-
+                
                 double resultClassIndex = _bestResult.Model.classifyInstance(inst);
                 return _instances.classAttribute().value((int)resultClassIndex);
             }
@@ -184,10 +220,5 @@ namespace WekaDataMiningApp
                 return "Prediction Error: " + ex.Message;
             }
         }
-
-        public int GetInstanceCount() => _instances == null ? 0 : _instances.numInstances();
-        public string GetClassAttributeName() => _instances == null ? "?" : _instances.classAttribute().name();
-        
-        public AlgorithmResult GetBestResult() => _bestResult;
     }
 }
